@@ -1,0 +1,92 @@
+name: Build Extension
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest_path = Path("forsyth-schools-portal/manifest.json")
+          manifest = json.loads(manifest_path.read_text())
+
+          assert manifest.get("manifest_version") == 3, "Manifest V3 required"
+          assert manifest.get("name"), "Extension name required"
+          assert manifest.get("version"), "Extension version required"
+
+          required_files = [
+              "forsyth-schools-portal/popup.html",
+              "forsyth-schools-portal/popup.js",
+              "forsyth-schools-portal/popup.css",
+              "forsyth-schools-portal/background.js",
+              "forsyth-schools-portal/content/infinite-campus.js",
+              "forsyth-schools-portal/content/classlink.js",
+              "forsyth-schools-portal/assets/icons/icon16.png",
+              "forsyth-schools-portal/assets/icons/icon48.png",
+              "forsyth-schools-portal/assets/icons/icon128.png",
+          ]
+
+          for path in required_files:
+              assert Path(path).is_file(), f"Missing required file: {path}"
+
+          print(f"Validated Forsyth Schools Portal v{manifest['version']}")
+          PY
+
+      - name: Package extension
+        run: |
+          VERSION=$(python3 -c "import json; print(json.load(open('forsyth-schools-portal/manifest.json'))['version'])")
+          PACKAGE_NAME="forsyth-schools-portal-v${VERSION}"
+
+          mkdir -p dist
+          cd forsyth-schools-portal
+          zip -r "../dist/${PACKAGE_NAME}.zip" . \
+            -x "*.DS_Store" \
+            -x "__MACOSX/*"
+
+          cd ..
+          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> "$GITHUB_ENV"
+          echo "Built dist/${PACKAGE_NAME}.zip"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: forsyth-schools-portal
+          path: dist/*.zip
+          retention-days: 90
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
+
+      - name: Publish latest release on main
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="latest-build"
+          gh release view "$TAG" >/dev/null 2>&1 && gh release delete "$TAG" -y || true
+          gh release create "$TAG" \
+            dist/*.zip \
+            --title "Latest build (main)" \
+            --notes "Automated package from the latest \`main\` branch. Download the zip, extract it, then load the folder in Chrome via \`chrome://extensions\` → Developer mode → Load unpacked."

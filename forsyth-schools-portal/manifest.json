@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Forsyth Schools Portal",
+  "version": "1.0.0",
+  "description": "Quick access to ClassLink, Infinite Campus, Canvas, and Forsyth County Schools resources.",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    },
+    "default_title": "Forsyth Schools Portal"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://campus.forsyth.k12.ga.us/*",
+    "https://classlink.forsyth.k12.ga.us/*",
+    "https://forsyth.instructure.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://campus.forsyth.k12.ga.us/*"],
+      "js": ["content/infinite-campus.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://classlink.forsyth.k12.ga.us/*"],
+      "js": ["content/classlink.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
