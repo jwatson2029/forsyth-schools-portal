@@ -28,7 +28,7 @@
       id: "canvas",
       title: "Canvas",
       description: "Access assignments",
-      url: "https://forsyth.instructure.com/",
+      url: "https://forsyth.instructure.com/?login_success=1",
       iconClass: "canvas",
     },
     {
