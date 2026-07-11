@@ -2,6 +2,9 @@
  * Infinite Campus content script.
  * Reads ONLY the visible student display name from a single DOM element
  * and saves it locally. No other page data is accessed.
+ *
+ * Infinite Campus loads the student portal inside an iframe (#main-workspace).
+ * This script runs in all matching frames (see manifest all_frames).
  */
 
 (function () {
@@ -9,9 +12,32 @@
 
   const SELECTOR = "h2.student-card__student-name";
   const MIN_NAME_LENGTH = 2;
-  const FLAG = "__forsythPortalNameCaptured";
+  const INIT_FLAG = "__forsythPortalNameInit";
+  const CAPTURED_FLAG = "__forsythPortalNameCaptured";
+  const OBSERVER_TIMEOUT_MS = 180000;
 
-  if (window[FLAG]) {
+  if (window[INIT_FLAG]) {
+    return;
+  }
+  window[INIT_FLAG] = true;
+
+  /**
+   * The student name lives in the workspace iframe, not the nav-wrapper shell.
+   * Skip the outer shell so we only observe frames that can contain the name.
+   */
+  function shouldSkipFrame() {
+    if (window.self !== window.top) {
+      return false;
+    }
+
+    const hasWorkspaceIframe = document.querySelector(
+      'iframe#main-workspace, iframe[data-cy="workspace-frame"], iframe.iframeWorkspace'
+    );
+
+    return Boolean(hasWorkspaceIframe);
+  }
+
+  if (shouldSkipFrame()) {
     return;
   }
 
@@ -22,7 +48,6 @@
     if (!raw) return "";
     const name = raw.replace(/\s+/g, " ").trim();
     if (name.length < MIN_NAME_LENGTH) return "";
-    // Ignore obvious placeholder text
     if (/^(student|name|welcome|user)$/i.test(name)) return "";
     return name;
   }
@@ -35,10 +60,13 @@
 
     chrome.storage.local.get(["studentName"], (result) => {
       if (chrome.runtime.lastError) return;
-      if (result.studentName === name) return;
+      if (result.studentName === name) {
+        window[CAPTURED_FLAG] = true;
+        return;
+      }
 
       chrome.storage.local.set({ studentName: name }, () => {
-        window[FLAG] = true;
+        window[CAPTURED_FLAG] = true;
       });
     });
   }
@@ -47,6 +75,8 @@
    * Attempt to read the student name element once.
    */
   function tryCaptureName() {
+    if (window[CAPTURED_FLAG]) return true;
+
     const el = document.querySelector(SELECTOR);
     if (!el) return false;
 
@@ -57,23 +87,52 @@
     return true;
   }
 
-  // Try immediately on load
-  if (tryCaptureName()) {
-    return;
+  let observer = null;
+
+  function stopObserver() {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
   }
 
-  // Lightweight observer for SPA navigation — disconnects after first success
-  const observer = new MutationObserver(() => {
+  function startObserver() {
+    if (observer || window[CAPTURED_FLAG]) return;
+
+    observer = new MutationObserver(() => {
+      if (tryCaptureName()) {
+        stopObserver();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    setTimeout(stopObserver, OBSERVER_TIMEOUT_MS);
+  }
+
+  function attemptCapture() {
     if (tryCaptureName()) {
-      observer.disconnect();
+      stopObserver();
+      return;
+    }
+    startObserver();
+  }
+
+  // Try immediately, then watch for Angular SPA render inside iframe
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attemptCapture, { once: true });
+  } else {
+    attemptCapture();
+  }
+
+  // Re-check when user returns to the tab (IC may finish rendering while backgrounded)
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      attemptCapture();
     }
   });
-
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
-
-  // Safety: stop observing after 30 seconds to avoid lingering observers
-  setTimeout(() => observer.disconnect(), 30000);
 })();

@@ -68,7 +68,7 @@ The extension does **not** request access to all websites, cookies, browsing his
 - **Local storage only** — Your display name is stored in `chrome.storage.local` on your device
 - **No credentials** — The extension never reads passwords, cookies, or authentication tokens
 - **Minimal page access** — Content scripts read only:
-  - The student name heading on Infinite Campus (`h2.student-card__student-name`)
+  - The student name heading on Infinite Campus (`h2.student-card__student-name`) inside the student portal iframe
   - Visible login/dashboard UI on ClassLink to detect session state
 
 To clear stored data: go to `chrome://extensions`, find Forsyth Schools Portal, and click **Remove** or clear extension data.

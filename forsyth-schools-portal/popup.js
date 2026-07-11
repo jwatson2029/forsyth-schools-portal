@@ -21,7 +21,7 @@
       id: "infinite-campus",
       title: "Infinite Campus",
       description: "View grades and attendance",
-      url: "https://campus.forsyth.k12.ga.us/campus/portal/forsyth.jsp",
+      url: "https://campus.forsyth.k12.ga.us/campus/apps/portal/student/home",
       iconClass: "infinite-campus",
     },
     {
