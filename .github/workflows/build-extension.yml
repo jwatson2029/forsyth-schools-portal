@@ -42,6 +42,10 @@ jobs:
               "forsyth-schools-portal/assets/icons/icon16.png",
               "forsyth-schools-portal/assets/icons/icon48.png",
               "forsyth-schools-portal/assets/icons/icon128.png",
+              "forsyth-schools-portal/assets/logos/classlink.svg",
+              "forsyth-schools-portal/assets/logos/infinite-campus.png",
+              "forsyth-schools-portal/assets/logos/canvas.png",
+              "forsyth-schools-portal/assets/logos/forsyth.svg",
           ]
 
           for path in required_files:

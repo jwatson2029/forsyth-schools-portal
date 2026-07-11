@@ -6,49 +6,40 @@
 (function () {
   "use strict";
 
-  const MIN_LOADING_MS = 150;
+  const MIN_LOADING_MS = 120;
 
   const RESOURCES = [
     {
       id: "classlink",
       title: "ClassLink",
-      description: "Open your school apps",
+      description: "School apps",
       url: "https://launchpad.classlink.com/forsyth?autosamllogin=1",
-      iconClass: "classlink",
-      highlightWhen: "classlink-signin",
+      logo: "assets/logos/classlink.svg",
     },
     {
       id: "infinite-campus",
       title: "Infinite Campus",
-      description: "View grades and attendance",
+      description: "Grades & attendance",
       url: "https://campus.forsyth.k12.ga.us/campus/SSO/forsyth/portal/students?configID=1",
-      iconClass: "infinite-campus",
+      logo: "assets/logos/infinite-campus.png",
     },
     {
       id: "canvas",
       title: "Canvas",
-      description: "Access assignments",
+      description: "Assignments",
       url: "https://forsyth.instructure.com/?login_success=1",
-      iconClass: "canvas",
+      logo: "assets/logos/canvas.png",
     },
     {
       id: "resources",
-      title: "School Resources",
-      description: "District links and info",
+      title: "Resources",
+      description: "District info",
       url: "https://www.forsyth.k12.ga.us/",
-      iconClass: "resources",
+      logo: "assets/logos/forsyth.svg",
     },
   ];
 
-  const ICONS = {
-    classlink: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
-    "infinite-campus": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-    canvas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>`,
-    resources: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
-  };
-
   const loadingEl = document.getElementById("loading-state");
-  const welcomeContentEl = document.getElementById("welcome-content");
   const welcomeHeadingEl = document.getElementById("welcome-heading");
   const welcomeMessageEl = document.getElementById("welcome-message");
   const errorEl = document.getElementById("error-state");
@@ -56,94 +47,69 @@
 
   let loadStartTime = Date.now();
 
-  /**
-   * Open a resource URL in a new tab.
-   */
   function openResource(url) {
     chrome.tabs.create({ url });
   }
 
-  /**
-   * Render dashboard resource cards.
-   */
   function renderCards(highlightId) {
     cardsGridEl.innerHTML = "";
 
     RESOURCES.forEach((resource) => {
-      const card = document.createElement("article");
+      const card = document.createElement("button");
+      card.type = "button";
       card.className = "resource-card";
       if (resource.id === highlightId) {
         card.classList.add("highlight");
       }
 
       card.innerHTML = `
-        <div class="card-icon ${resource.iconClass}">
-          ${ICONS[resource.id]}
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">${resource.title}</h3>
-          <p class="card-description">${resource.description}</p>
-        </div>
-        <button class="card-open-btn" data-url="${resource.url}" aria-label="Open ${resource.title}">
-          Open
-        </button>
+        <img class="card-logo" src="${resource.logo}" alt="" width="36" height="36" />
+        <span class="card-title">${resource.title}</span>
+        <span class="card-description">${resource.description}</span>
       `;
 
-      card.querySelector(".card-open-btn").addEventListener("click", () => {
-        openResource(resource.url);
-      });
+      card.addEventListener("click", () => openResource(resource.url));
 
       cardsGridEl.appendChild(card);
     });
   }
 
-  /**
-   * Determine welcome heading and message from stored data.
-   */
   function getWelcomeContent(data) {
     const studentName = data.studentName || "";
     const classlinkLoggedIn = data.classlinkLoggedIn;
 
-    // ClassLink not signed in — prompt sign-in
     if (classlinkLoggedIn === false) {
       return {
-        heading: "Please sign in to ClassLink",
-        message: "Sign in to ClassLink to access your school apps.",
+        heading: "Sign in to ClassLink",
+        message: "Sign in to access your apps.",
         highlightId: "classlink",
       };
     }
 
-    // Has student name — personalized welcome
     if (studentName) {
       return {
         heading: `Welcome, ${studentName}`,
-        message: "Your school tools are ready.",
+        message: "Your tools are ready.",
         highlightId: null,
       };
     }
 
-    // No name yet — empty state
     return {
       heading: "Welcome!",
-      message: "Open Infinite Campus to personalize your dashboard.",
+      message: "Visit Infinite Campus to personalize.",
       highlightId: "infinite-campus",
     };
   }
 
-  /**
-   * Update the welcome section UI.
-   */
   function renderWelcome(data) {
     const { heading, message, highlightId } = getWelcomeContent(data);
 
     welcomeHeadingEl.textContent = heading;
     welcomeMessageEl.textContent = message;
+    welcomeMessageEl.classList.remove("hidden");
     renderCards(highlightId);
   }
 
-  /**
-   * Show the appropriate welcome state, respecting minimum loading time.
-   */
   function showWelcome(data, hasError) {
     const elapsed = Date.now() - loadStartTime;
     const delay = Math.max(0, MIN_LOADING_MS - elapsed);
@@ -152,19 +118,16 @@
       loadingEl.classList.add("hidden");
 
       if (hasError) {
+        welcomeHeadingEl.textContent = "Something went wrong";
         errorEl.classList.remove("hidden");
         renderCards(null);
         return;
       }
 
-      welcomeContentEl.classList.remove("hidden");
       renderWelcome(data);
     }, delay);
   }
 
-  /**
-   * Read storage and render dashboard.
-   */
   function loadDashboard() {
     chrome.storage.local.get(
       ["studentName", "classlinkLoggedIn", "classlinkCheckedAt"],
@@ -178,9 +141,6 @@
     );
   }
 
-  /**
-   * Re-render welcome when storage changes (e.g. user visits IC or ClassLink).
-   */
   function onStorageChanged(changes, area) {
     if (area !== "local") return;
 
@@ -195,18 +155,14 @@
       ["studentName", "classlinkLoggedIn", "classlinkCheckedAt"],
       (result) => {
         if (chrome.runtime.lastError) return;
-
-        // If still in loading state, let loadDashboard finish
         if (!loadingEl.classList.contains("hidden")) return;
 
         errorEl.classList.add("hidden");
-        welcomeContentEl.classList.remove("hidden");
         renderWelcome(result);
       }
     );
   }
 
-  // Initialize
   loadStartTime = Date.now();
   chrome.storage.onChanged.addListener(onStorageChanged);
   loadDashboard();
