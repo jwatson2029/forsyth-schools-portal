@@ -92,6 +92,37 @@ forsyth-schools-portal/
 
 ## Chrome Web Store Submission
 
+### Store listing copy
+
+**Short description** (132 characters max — also used in `manifest.json`):
+
+> Your Forsyth schools dashboard in one click—ClassLink, Infinite Campus, Canvas, and district tools, personalized and private.
+
+**Detailed description** (paste into the Chrome Web Store listing):
+
+> Forsyth Schools Portal puts everything you need for school in one place—right from your Chrome toolbar.
+>
+> Instead of digging through bookmarks or opening tabs one by one, click the extension icon to open a clean dashboard with quick access to ClassLink, Infinite Campus, Canvas, and Forsyth County Schools resources. Each tool is one tap away.
+>
+> **Why install it?**
+> - **Save time** — Open ClassLink, Infinite Campus, and Canvas from a single dashboard
+> - **Feels personal** — Greets you by name after you visit Infinite Campus (stored only on your device)
+> - **Built for Forsyth students** — Links point to the correct Forsyth County Schools portals
+> - **Private by design** — No tracking, no analytics, no data sent to external servers
+> - **Lightweight** — Small popup, dark modern UI, no account required to use the extension itself
+>
+> **What it does**
+> - Launches ClassLink, Infinite Campus, Canvas, and the district website in a new tab
+> - Reads your display name from Infinite Campus to personalize your welcome message
+> - Remembers your name locally so the dashboard is ready every time you open it
+>
+> **What it does NOT do**
+> - Does not collect passwords, grades, or browsing history
+> - Does not sell or share student information
+> - Does not bypass school login— you sign in through your school's normal pages
+>
+> Made for Forsyth County Schools students who want a faster, simpler way to get to their school tools every day.
+
 ### Before submitting
 
 1. **Test thoroughly** — Load unpacked and verify all cards open correctly, name detection works on Infinite Campus, and ClassLink sign-in prompts appear when logged out
