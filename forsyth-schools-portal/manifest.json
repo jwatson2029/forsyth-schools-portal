@@ -28,7 +28,7 @@
   ],
   "host_permissions": [
     "https://campus.forsyth.k12.ga.us/*",
-    "https://classlink.forsyth.k12.ga.us/*",
+    "https://launchpad.classlink.com/*",
     "https://forsyth.instructure.com/*"
   ],
   "content_scripts": [
@@ -39,7 +39,7 @@
       "all_frames": true
     },
     {
-      "matches": ["https://classlink.forsyth.k12.ga.us/*"],
+      "matches": ["https://launchpad.classlink.com/*"],
       "js": ["content/classlink.js"],
       "run_at": "document_idle"
     }

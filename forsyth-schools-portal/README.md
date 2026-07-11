@@ -56,7 +56,7 @@ You can also download the zip from any [GitHub Release](https://github.com/jwats
 | Domain | Why it's needed |
 |---|---|
 | `campus.forsyth.k12.ga.us` | Read your visible display name from the Infinite Campus student card (one element only) |
-| `classlink.forsyth.k12.ga.us` | Detect whether you are signed into ClassLink (visible UI only) |
+| `launchpad.classlink.com` | Detect whether you are signed into ClassLink (visible UI only) |
 | `forsyth.instructure.com` | Open Canvas when you click the Canvas card |
 
 The extension does **not** request access to all websites, cookies, browsing history, or passwords.

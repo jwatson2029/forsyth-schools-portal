@@ -13,7 +13,7 @@
       id: "classlink",
       title: "ClassLink",
       description: "Open your school apps",
-      url: "https://classlink.forsyth.k12.ga.us/",
+      url: "https://launchpad.classlink.com/forsyth?autosamllogin=1",
       iconClass: "classlink",
       highlightWhen: "classlink-signin",
     },

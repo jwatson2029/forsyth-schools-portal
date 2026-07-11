@@ -84,7 +84,7 @@
     }
 
     // On ClassLink domain but no login form visible — likely logged in
-    if (!passwordField && url.includes("classlink.forsyth.k12.ga.us")) {
+    if (!passwordField && url.includes("launchpad.classlink.com")) {
       return true;
     }
 
