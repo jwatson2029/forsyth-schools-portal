@@ -35,7 +35,7 @@
       title: "Resources",
       description: "District info",
       url: "https://www.forsyth.k12.ga.us/",
-      logo: "assets/logos/forsyth.svg",
+      logo: "assets/logos/forsyth.png",
     },
   ];
 
