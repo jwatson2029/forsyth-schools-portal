@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — Forsyth Schools Portal</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.6;
+        max-width: 720px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #1a1a2e;
+      }
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.15rem; margin-top: 2rem; }
+      p, li { font-size: 0.95rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Privacy Policy</h1>
+    <p><strong>Forsyth Schools Portal</strong><br />Last updated: July 11, 2026</p>
+
+    <p>
+      Forsyth Schools Portal is a Chrome extension that helps Forsyth County Schools
+      students quickly open ClassLink, Infinite Campus, Canvas, and district resources
+      from a single dashboard.
+    </p>
+
+    <h2>Information we access</h2>
+    <ul>
+      <li>
+        <strong>Student display name</strong> — When you visit Infinite Campus while
+        logged in, the extension reads your visible display name from a single page
+        element (<code>h2.student-card__student-name</code>) to personalize the
+        welcome message in the extension popup.
+      </li>
+      <li>
+        <strong>ClassLink sign-in state</strong> — When you visit ClassLink, the
+        extension checks whether a login form or app launcher is visible to show an
+        appropriate message in the popup. It does not read usernames, passwords, or
+        cookies.
+      </li>
+    </ul>
+
+    <h2>Information we store</h2>
+    <p>
+      The extension stores the following data locally on your device using
+      <code>chrome.storage.local</code>:
+    </p>
+    <ul>
+      <li>Your student display name (if detected on Infinite Campus)</li>
+      <li>Whether ClassLink appears to be signed in (true/false)</li>
+      <li>A timestamp of the last ClassLink sign-in check</li>
+    </ul>
+
+    <h2>Information we do NOT collect</h2>
+    <ul>
+      <li>Passwords, credentials, or authentication tokens</li>
+      <li>Grades, attendance records, assignments, or other academic records</li>
+      <li>Browsing history outside the specific school domains listed in the extension</li>
+      <li>Location data</li>
+      <li>Analytics, tracking, or advertising data</li>
+    </ul>
+
+    <h2>How data is used</h2>
+    <p>
+      Stored data is used only to personalize the extension popup (for example,
+      showing “Welcome, [Name]”) and to display helpful sign-in prompts. Data is
+      never sold, shared with third parties, or transmitted to external servers.
+    </p>
+
+    <h2>Data retention and deletion</h2>
+    <p>
+      Data remains on your device until you remove the extension or clear extension
+      data in Chrome at <code>chrome://extensions</code>.
+    </p>
+
+    <h2>Third-party services</h2>
+    <p>
+      The extension opens official Forsyth County Schools websites (ClassLink,
+      Infinite Campus, Canvas, and the district site) in new browser tabs when you
+      click a dashboard tile. Those sites have their own privacy policies and login
+      systems. This extension does not bypass or replace school authentication.
+    </p>
+
+    <h2>Remote code</h2>
+    <p>
+      All extension code is included in the extension package. No remote JavaScript
+      or WebAssembly is loaded or executed.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      For questions about this privacy policy, open an issue on the project
+      repository:
+      <a href="https://github.com/jwatson2029/forsyth-schools-portal">github.com/jwatson2029/forsyth-schools-portal</a>
+    </p>
+  </body>
+</html>
